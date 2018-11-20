@@ -47,7 +47,7 @@ def change_background(image, background):
             except:
                 pass
             
-            if green > 70 and red > 10 and blue > 30 and blue < 60 and red < 60: # greenscreen
+            if green > red + blue -7: # greenscreen
                 pixels[i,j] = (int(red_b), int(green_b), int(blue_b))
             
             else:
@@ -59,9 +59,9 @@ def change_background(image, background):
 # Main
 if __name__ == "__main__":
   # Load Image (JPEG/JPG needs libjpeg to load)
-  original = open_image('test.png')
+  original = open_image('test_three.png')
   background = open_image('eiffel_tower.png')
   print('Now converting...')
   new = change_background(original, background)
   print('Done')
-  save_image(new, 'converted_test_eiffel_tower.png')
+  save_image(new, 'Andres_converted_test_eiffel_tower.png')
