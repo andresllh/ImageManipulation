@@ -16,9 +16,11 @@ def clamp(value, minimum, maximum):
 #  @param points list of (x, y, dx, dy) tuples
 #  @return warped image
 
-def warp(image, points):
+def warp(image, point):
   result = img = Image.new("RGB",image.size,"black")
-
+  if point[0] > image.size[0] or point[2] > image.size[0] or point[1] > image.size[1] or point[3] > image.size[1]:
+    print("Point given is out of range")
+    return
   image_pixels = image.load()
   result_pixels = result.load()
 
@@ -27,21 +29,24 @@ def warp(image, points):
 
       offset = [0,0]
 
-      for point in points:
-        point_position = (point[0] + point[2],point[1] + point[3])
-        shift_vector = (point[2],point[3])
+      point_position = (point[0] + point[2],point[1] + point[3])
+      shift_vector = (point[2],point[3])
 
-        helper = 1.0 / (3 * (points_distance((x,y),point_position) / vector_length(shift_vector)) ** 4 + 1)
+      # warping formula
+      helper = 1.0 / (3 * (points_distance((x,y),point_position) / vector_length(shift_vector)) ** 4 + 1)
 
-        offset[0] -= helper * shift_vector[0]
-        offset[1] -= helper * shift_vector[1]
 
+      offset[0] -= helper * shift_vector[0]
+      offset[1] -= helper * shift_vector[1]
+
+      # coordinates for new pixels
       coords = (clamp(x + int(offset[0]),0,image.size[0] - 1),clamp(y + int(offset[1]),0,image.size[1] - 1))
 
       result_pixels[x,y] = image_pixels[coords[0],coords[1]]
 
   return result
 
-image = Image.open("tester.png")
-image = warp(image,[(210,296,100,0), (101,97,-30,-10), (77,473,50,-100)])
-image.save("testwarp.png","PNG")
+image = Image.open("movie.png")
+print("Now warping image...")
+image = warp(image, (890, 590, 200, 300))
+image.save("testwarp_two.png","PNG")
